@@ -1,20 +1,31 @@
 const express = require('express');
+const User = require('./userDB.js');
 
 const router = express.Router();
+
+
+router.get('/', async (req, res) => {
+  try {
+    const user = await User.get(req.query)
+    res.status(200).json(user)
+  } catch (error) {
+    res.status(500).json({ errorMessage: 'The request failed !!!' })
+  }
+});
+
+router.get('/:id', (req, res) => {
+try {
+
+} catch (error) {
+
+}
+});
 
 router.post('/', (req, res) => {
 
 });
 
 router.post('/:id/posts', (req, res) => {
-
-});
-
-router.get('/', (req, res) => {
-
-});
-
-router.get('/:id', (req, res) => {
 
 });
 
