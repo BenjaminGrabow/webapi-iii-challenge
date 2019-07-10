@@ -14,7 +14,7 @@ router.get('/', async (req, res) => {
   }
 });
 
-router.get('/:id', validateUserId, async (req, res) => {
+router.get('/:id', validateUserId, (req, res) => {
   res.status(200).json(req.user);
 });
 
@@ -33,11 +33,11 @@ router.put('/:id', validateUserId, async (req, res) => {
       res.status(200).json({ message: 'User got updated !' });
 });
 
-router.post('/', validateUser, async (req, res) => {
+router.post('/', validateUser, (req, res) => {
   try {
-    res.status(200).json({ message: 'User got added !!'})
+    res.status(200).json({ message: 'User got added !!'});
   } catch (error) {
-    res.status(500).json({ errorMessage: 'The request failed !!!' })
+    res.status(500).json({ errorMessage: 'The request failed !!!' });
   }
 });
 
@@ -61,30 +61,30 @@ async function validateUserId(req, res, next) {
       req.user = user;
       next();
     } else {
-      res.status(400).json({ message: 'Id is not available !' })
+      res.status(400).json({ message: 'Id is not available !' });
     }
   } catch (error) {
-    res.status(500).json({ errorMessage: 'The request failed !!!' })
+    res.status(500).json({ errorMessage: 'The request failed !!!' });
   }
 };
 
 async function validateUser(req, res, next) {
   if (!req.body) {
-    res.status(400).json({message:"Missing user data"})
+    res.status(400).json({message:"Missing user data"});
 } else if (!req.body.name) {
-    res.status(400).json({message:"Missing user name"})
+    res.status(400).json({message:"Missing user name"});
 } else{
-    next()
+    next();
 }
-}
+};
 
 function validatePost(req, res, next) {
     if (!req.body) {
-      res.status(400).json({message:"Missing user data"})
+      res.status(400).json({message:"Missing user data"});
   } else if (!req.body.text) {
-      res.status(400).json({message:"Missing user post"})
+      res.status(400).json({message:"Missing user post"});
   } else{
-      next()
+      next();
   }
 };
 
