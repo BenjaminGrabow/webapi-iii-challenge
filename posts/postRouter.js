@@ -17,19 +17,9 @@ router.get('/:id', validatePostId, async (req, res) => {
       res.status(200).json(req.post);
 });
 
-router.delete('/:id', async (req, res) => {
-  try {
-    const deleteIt = await Posts.remove(req.params.id);
-
-    if (deleteIt > 0) {
+router.delete('/:id', validatePostId, async (req, res) => {
+    const deleteIt = await Posts.remove(req.post);
       res.status(200).json({ message: 'Post got deleted !' });
-    } else {
-      res.status(400).json({ message: 'Post id is not available !' });
-    }
-
-  } catch (error) {
-    res.status(500).json({ errorMessage: 'The request failed !!!' });
-  }
 });
 
 router.put('/:id', async (req, res) => {
