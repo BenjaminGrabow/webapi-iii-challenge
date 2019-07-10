@@ -18,46 +18,19 @@ router.get('/:id', validateUserId, async (req, res) => {
   res.status(200).json(req.user);
 });
 
-router.get('/:id/posts', async (req, res) => {
-  try {
+router.get('/:id/posts', validateUserId, async (req, res) => {
     const posts = await User.getUserPosts(req.params.id);
-    if (posts) {
       res.status(200).json(posts);
-    } else {
-      res.status(400).json({ message: 'User id is not available !' });
-    }
-
-  } catch (error) {
-    res.status(500).json({ errorMessage: 'The request failed !!!' });
-  }
 });
 
-router.delete('/:id', async (req, res) => {
-  try {
-    const deleteIt = await User.remove(req.params.id);
-
-    if (deleteIt > 0) {
+router.delete('/:id', validateUserId, async (req, res) => {
+    const deleteIt = await User.remove(req.user);
       res.status(200).json({ message: 'User got deleted !' });
-    } else {
-      res.status(400).json({ message: 'User id is not available !' });
-    }
-
-  } catch (error) {
-    res.status(500).json({ errorMessage: 'The request failed !!!' });
-  }
 });
 
-router.put('/:id', async (req, res) => {
-  try {
-    const update = await User.update(req.params.id, req.body);
-    if (req.body.name[4]) {
+router.put('/:id', validateUserId, async (req, res) => {
+    const update = await User.update(req.user, req.body);
       res.status(200).json({ message: 'User got updated !' });
-    } else {
-      res.status(400).json({ message: 'Name must be at least 5 characters long !' })
-    }
-  } catch (error) {
-    res.status(500).json({ errorMessage: 'The request failed !!!' });
-  }
 });
 
 router.post('/', validateUser, async (req, res) => {
