@@ -20,7 +20,7 @@ server.use(express.json());
 server.use(logger);
 
 server.use('/api/user', userRouter)
-server.use('api/posts', postsRouter)
+server.use('/api/posts', postsRouter)
 
 
 module.exports = server;
