@@ -3,7 +3,6 @@ const User = require('./userDB.js');
 
 const router = express.Router();
 
-
 router.get('/', async (req, res) => {
   try {
     const user = await User.get(req.query)
@@ -13,12 +12,22 @@ router.get('/', async (req, res) => {
   }
 });
 
-router.get('/:id', (req, res) => {
-try {
+router.get('/:id', async (req, res) => {
+  try {
+    const user = await User.getById(req.params.id);
 
-} catch (error) {
+    if (user) {
+res.status(200).json(user);
+    } else {
+      res.status(400).json({ message: 'User id is not available !' })
+    }
+  } catch (error) {
+    res.status(500).json({ errorMessage: 'The request failed !!!' })
+  }
+});
 
-}
+router.get('/:id/posts', (req, res) => {
+
 });
 
 router.post('/', (req, res) => {
@@ -29,9 +38,6 @@ router.post('/:id/posts', (req, res) => {
 
 });
 
-router.get('/:id/posts', (req, res) => {
-
-});
 
 router.delete('/:id', (req, res) => {
 
