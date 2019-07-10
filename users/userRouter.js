@@ -1,5 +1,6 @@
 const express = require('express');
 const User = require('./userDB.js');
+const Post = require('../posts/postDb');
 
 const router = express.Router();
 
@@ -14,7 +15,7 @@ router.get('/', async (req, res) => {
 });
 
 router.get('/:id', validateUserId, async (req, res) => {
-      res.status(200).json(req.user);
+  res.status(200).json(req.user);
 });
 
 router.get('/:id/posts', async (req, res) => {
@@ -33,13 +34,13 @@ router.get('/:id/posts', async (req, res) => {
 
 router.delete('/:id', async (req, res) => {
   try {
-const deleteIt = await User.remove(req.params.id);
+    const deleteIt = await User.remove(req.params.id);
 
-if (deleteIt > 0) {
-  res.status(200).json({ message: 'User got deleted !'});
-} else {
-  res.status(400).json({ message: 'User id is not available !' });
-}
+    if (deleteIt > 0) {
+      res.status(200).json({ message: 'User got deleted !' });
+    } else {
+      res.status(400).json({ message: 'User id is not available !' });
+    }
 
   } catch (error) {
     res.status(500).json({ errorMessage: 'The request failed !!!' });
@@ -48,67 +49,70 @@ if (deleteIt > 0) {
 
 router.put('/:id', async (req, res) => {
   try {
-const update = await User.update(req.params.id, req.body);
-if(req.body.name[4]) {
-res.status(200).json({ message: 'User got updated !'});
-} else {
-  res.status(400).json({ message: 'Name must be at least 5 characters long !'})
-}
+    const update = await User.update(req.params.id, req.body);
+    if (req.body.name[4]) {
+      res.status(200).json({ message: 'User got updated !' });
+    } else {
+      res.status(400).json({ message: 'Name must be at least 5 characters long !' })
+    }
   } catch (error) {
     res.status(500).json({ errorMessage: 'The request failed !!!' });
   }
 });
 
-router.post('/', async (req, res) => {
+router.post('/', validateUser, async (req, res) => {
   try {
-const addUser = await User.insert(req.body);
-if(req.body.name[4]) {
-  res.status(200).json({ message: 'User got added'});
-} else {
-  res.status(400).json({ message: 'User name must be at least 5 charactes long !!!'})
-}
+    res.status(200).json({ message: 'User got added !!'})
   } catch (error) {
-    res.status(500).json({ errorMessage: 'The request failed !!!' });
+    res.status(500).json({ errorMessage: 'The request failed !!!' })
   }
 });
 
-// router.post('/:id/posts', async (req, res) => {
-//   try {
-// const addPosts = await User.insert(req.body);
-// if(req.body.text[4]) {
-//   res.status(200).json({ message: 'User got added'});
-// } else {
-//   res.status.json({ message: 'User name must be at least 5 charactes long !!!'})
-// }
-//   } catch (error) {
-//     res.status(500).json({ errorMessage: 'The request failed !!!' })
-//   }
-// });
-
+router.post('/:id/posts', validatePost, async (req, res) => {
+  const userPost = { ...req.body, user_id: req.params.id };
+  try {
+const addPosts = await Post.insert(userPost);
+  res.status(200).json({ message: 'Post got added'});
+  } catch (error) {
+    res.status(500).json({ errorMessage: 'The request failed !!!' })
+  }
+});
 
 //custom middleware
 
 async function validateUserId(req, res, next) {
-try {
-const { id } = req.params;
-const user = await User.getById(id);
-if(user){
-  req.user = user;
-  next();
-} else {
-res.status(404).json({ message: 'Id is not available !'})
-}
-} catch (error) {
-  res.status(500).json({ errorMessage: 'The request failed !!!'})
-}
+  try {
+    const { id } = req.params;
+    const user = await User.getById(id);
+    if (user) {
+      req.user = user;
+      next();
+    } else {
+      res.status(400).json({ message: 'Id is not available !' })
+    }
+  } catch (error) {
+    res.status(500).json({ errorMessage: 'The request failed !!!' })
+  }
 };
 
-function validateUser(req, res, next) {
-
-};
+async function validateUser(req, res, next) {
+  if (!req.body) {
+    res.status(400).json({message:"Missing user data"})
+} else if (!req.body.name) {
+    res.status(400).json({message:"Missing user name"})
+} else{
+    next()
+}
+}
 
 function validatePost(req, res, next) {
-
+    if (!req.body) {
+      res.status(400).json({message:"Missing user data"})
+  } else if (!req.body.text) {
+      res.status(400).json({message:"Missing user post"})
+  } else{
+      next()
+  }
 };
 
 module.exports = router;

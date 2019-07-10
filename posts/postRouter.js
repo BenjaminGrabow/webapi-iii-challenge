@@ -14,18 +14,7 @@ router.get('/', async (req, res) => {
 });
 
 router.get('/:id', validatePostId, async (req, res) => {
-  // try {
-  //   const post = await Posts.getById(req.params.id);
-
-  //   if (post) {
       res.status(200).json(req.post);
-  //   } else {
-  //     res.status(400).json({ message: 'Post id is not available !' });
-  //   }
-
-  // } catch (error) {
-  //   res.status(500).json({ errorMessage: 'The request failed !!!' });
-  // }
 });
 
 router.delete('/:id', async (req, res) => {
@@ -66,7 +55,7 @@ async function validatePostId(req, res, next) {
       req.post = post;
       next();
     } else {
-      res.status(404).json({ message: 'invalid Id ' })
+      res.status(400).json({ message: 'invalid Id ' })
     }
   } catch (error) {
     res.status(500).json({ errorMessage: 'request dont could process' })
