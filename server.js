@@ -1,4 +1,5 @@
 const express = 'express';
+const userRouter = require('./users/userRouter.js');
 
 const server = express();
 
@@ -9,7 +10,15 @@ server.get('/', (req, res) => {
 //custom middleware
 
 function logger(req, res, next) {
-
+ console.log(req.method, req.url, new Date());
+ next();
 };
+
+server.use(express.json());
+
+server.use(logger);
+
+server.use('/api/user', userRouter)
+
 
 module.exports = server;
