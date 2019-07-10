@@ -13,19 +13,8 @@ router.get('/', async (req, res) => {
   }
 });
 
-router.get('/:id', async (req, res) => {
-  try {
-    const user = await User.getById(req.params.id);
-
-    if (user) {
-      res.status(200).json(user);
-    } else {
-      res.status(400).json({ message: 'User id is not available !' });
-    }
-
-  } catch (error) {
-    res.status(500).json({ errorMessage: 'The request failed !!!' });
-  }
+router.get('/:id', validateUserId, async (req, res) => {
+      res.status(200).json(req.user);
 });
 
 router.get('/:id/posts', async (req, res) => {
@@ -76,7 +65,7 @@ const addUser = await User.insert(req.body);
 if(req.body.name[4]) {
   res.status(200).json({ message: 'User got added'});
 } else {
-  res.status.json({ message: 'User name must be at least 5 charactes long !!!'})
+  res.status(400).json({ message: 'User name must be at least 5 charactes long !!!'})
 }
   } catch (error) {
     res.status(500).json({ errorMessage: 'The request failed !!!' });
@@ -99,8 +88,19 @@ if(req.body.name[4]) {
 
 //custom middleware
 
-function validateUserId(req, res, next) {
-
+async function validateUserId(req, res, next) {
+try {
+const { id } = req.params;
+const user = await User.getById(id);
+if(user){
+  req.user = user;
+  next();
+} else {
+res.status(404).json({ message: 'Id is not available !'})
+}
+} catch (error) {
+  res.status(500).json({ errorMessage: 'The request failed !!!'})
+}
 };
 
 function validateUser(req, res, next) {
