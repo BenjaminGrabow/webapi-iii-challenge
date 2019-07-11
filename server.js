@@ -3,6 +3,7 @@ const userRouter = require('./users/userRouter');
 const postsRouter = require('./posts/postRouter'); 
 
 const server = express();
+const cors = require('cors');
 
 server.get('/', (req, res) => {
   res.send(`<h2>Let's write some middleware!</h2>`)
@@ -16,6 +17,8 @@ function logger(req, res, next) {
 };
 
 server.use(express.json());
+
+server.use(cors());
 
 server.use(logger);
 
