@@ -1,5 +1,5 @@
 const express = require('express');
-const User = require('./userDB.js');
+const User = require('./userDb.js');
 const Post = require('../posts/postDb');
 
 const router = express.Router();
