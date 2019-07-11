@@ -18,18 +18,18 @@ router.get('/:id', validateUserId, (req, res) => {
   res.status(200).json(req.user);
 });
 
-router.get('/:id/posts', validateUserId, async (req, res) => {
+router.get('/:id/posts', validateUserId, (req, res) => {
     const posts = await User.getUserPosts(req.params.id);
       res.status(200).json(posts);
 });
 
-router.delete('/:id', validateUserId, async (req, res) => {
-    const deleteIt = await User.remove(req.user);
+router.delete('/:id', validateUserId, (req, res) => {
+      const deleteIt = await User.remove(req.params.id);
       res.status(200).json({ message: 'User got deleted !' });
 });
 
-router.put('/:id', validateUserId, async (req, res) => {
-    const update = await User.update(req.user, req.body);
+router.put('/:id', validateUserId, (req, res) => {
+    const update = await User.update(req.params.id, req.body);
       res.status(200).json({ message: 'User got updated !' });
 });
 
@@ -41,13 +41,13 @@ router.post('/', validateUser, (req, res) => {
   }
 });
 
-router.post('/:id/posts', validatePost, async (req, res) => {
+router.post('/:id/posts',[validateUserId, validatePost], async (req, res) => {
   const userPost = { ...req.body, user_id: req.params.id };
   try {
 const addPosts = await Post.insert(userPost);
   res.status(200).json({ message: 'Post got added'});
   } catch (error) {
-    res.status(500).json({ errorMessage: 'The request failed !!!' })
+    res.status(500).json({ errorMessage: 'The request failed !!!' });
   }
 });
 

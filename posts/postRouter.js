@@ -18,7 +18,7 @@ router.get('/:id', validatePostId, async (req, res) => {
 });
 
 router.delete('/:id', validatePostId, async (req, res) => {
-    const deleteIt = await Posts.remove(req.post);
+    const deleteIt = await Posts.remove(req.params.id);
       res.status(200).json({ message: 'Post got deleted !' });
 });
 
